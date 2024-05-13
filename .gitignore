@@ -1,0 +1,12 @@
+# tolstoy 
+.tolstoy 
+*.gif
+*.png
+deepseek.py
+itchat.pkl
+newInstance.pkl
+qq_polit.py
+tapi.config.js
+tyqw.py
+wxpy.py
+.idea/
