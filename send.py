@@ -1,3 +1,4 @@
+import os
 import itchat
 from http import HTTPStatus
 from dashscope import Generation
@@ -36,18 +37,18 @@ class FixedSizeQueue:
         mylist = list(self.data)
         mylist.insert(0, self.head_data)
         return mylist
-        
 
 
 fixed_queue = FixedSizeQueue(10)
-fixed_queue.head(
-    {"role": "system", "content": "你的名字叫小乐，是一个哄女朋友很厉害的人，能找各种机会逗她开心，你称呼她为静静，接下来你会收到一些日常聊天的话，请你用合适的措辞进行回复，回答尽量精简，控制在100字内。"})
+fixed_queue.head({"role": "system",
+                  "content": "你的名字叫小乐，是一个哄女朋友很厉害的人，能找各种机会逗她开心，你称呼她为静静，接下来你会收到一些日常聊天的话，请你用合适的措辞进行回复，回答尽量精简，控制在100字内。"})
 
 
 def deepseek(text):
     fixed_queue.push({"role": "user", "content": text})
     try:
-        client = OpenAI(api_key="sk-cde770386d204a6f937dceb20e47504d", base_url="https://api.deepseek.com")
+        api_key = os.environ.get("DeepSeek_ApiKey")
+        client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
         response = client.chat.completions.create(model="deepseek-chat", messages=fixed_queue.get_queue())
         res_text = response.choices[0].message.content
         fixed_queue.push({"role": "assistant", "content": res_text[:100]})
@@ -58,7 +59,7 @@ def deepseek(text):
     return res_text
 
 
-itchat.auto_login(hotReload=True,enableCmdQR=2)
+itchat.auto_login(hotReload=True, enableCmdQR=2)
 jj = itchat.search_friends(name="Jing")[0] if len(itchat.search_friends(name="Jing")) > 0 else {}
 liubai = itchat.search_friends(name="留白")[0] if len(itchat.search_friends(name="留白")) > 0 else {}
 print(jj)
@@ -102,8 +103,8 @@ def text_reply(msg):
 
 itchat.send('呼叫静静，我是机器人2号，你现在可以找我聊天了', toUserName="filehelper")
 itchat.run()
-# if __name__ == "__main__":
-#     print(deepseek("你好呀"))
+
+# if __name__ == "__main__":  #     print(deepseek("你好呀"))
 #     print(deepseek("今天好累呀"))
 #     print(deepseek("今天在下雨"))
 #     print(deepseek("不知道明天还会不会下"))
